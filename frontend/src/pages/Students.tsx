@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { deleteStudent, fetchStudents } from '../api';
 import type { Student, ListParams } from '../types';
 import { ToastContainer, type ToastMessage } from '../components/Toast';
 
 export function Students() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [students, setStudents] = useState<Student[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(() => searchParams.get('search') ?? '');
   const [gender, setGender] = useState('');
   const [sortBy, setSortBy] = useState('date_registered');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
