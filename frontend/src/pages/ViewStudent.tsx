@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { deleteStudent, fetchStudent } from '../api';
 import type { Student } from '../types';
 import { ToastContainer, type ToastMessage } from '../components/Toast';
@@ -50,10 +51,10 @@ export function ViewStudent() {
         </div>
         <div style={{ display: 'flex', gap: '0.6rem' }}>
           <Link to={`/students/${student.id}/edit`} className="btn btn-primary">
-            ✎ Edit
+            <Pencil size={15} /> Edit
           </Link>
           <button className="btn btn-danger" onClick={handleDelete} disabled={deleting}>
-            {deleting ? 'Deleting…' : '🗑 Delete'}
+            {deleting ? 'Deleting…' : <><Trash2 size={15} /> Delete</>}
           </button>
         </div>
       </div>
@@ -99,7 +100,7 @@ export function ViewStudent() {
 
       <div style={{ marginTop: '1.25rem' }}>
         <Link to="/students" className="btn btn-secondary">
-          ← Back to list
+          <ArrowLeft size={15} /> Back to list
         </Link>
       </div>
     </>

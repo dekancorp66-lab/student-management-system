@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Eye, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Avatar } from '../components/Avatar';
 import { deleteStudent, fetchStudents } from '../api';
 import type { Student, ListParams } from '../types';
 import { ToastContainer, type ToastMessage } from '../components/Toast';
@@ -82,9 +84,8 @@ export function Students() {
 
   const columns = [
     { key: 'id', label: 'ID' },
-    { key: 'full_name', label: 'Name' },
+    { key: 'full_name', label: 'Student' },
     { key: 'gender', label: 'Gender' },
-    { key: 'email', label: 'Email' },
     { key: 'course', label: 'Course' },
     { key: 'year_of_study', label: 'Year' },
     { key: 'date_registered', label: 'Registered' },
@@ -100,7 +101,7 @@ export function Students() {
           <p className="page-subtitle">{total} student{total !== 1 ? 's' : ''} registered</p>
         </div>
         <Link to="/students/new" className="btn btn-primary">
-          ➕ Add Student
+          <Plus size={16} /> Add student
         </Link>
       </div>
 
@@ -147,13 +148,17 @@ export function Students() {
                 {students.map((s) => (
                   <tr key={s.id}>
                     <td>{s.id}</td>
-                    <td style={{ fontWeight: 600 }}>{s.full_name}</td>
+                    <td>
+                      <Link to={`/students/${s.id}`} className="name-cell">
+                        <Avatar name={s.full_name} gender={s.gender} />
+                        <span><strong>{s.full_name}</strong><small>{s.email}</small></span>
+                      </Link>
+                    </td>
                     <td>
                       <span className={`badge badge-${s.gender}`}>{s.gender}</span>
                     </td>
-                    <td>{s.email}</td>
                     <td>{s.course}</td>
-                    <td>{s.year_of_study}</td>
+                    <td><span className="year-pill">Year {s.year_of_study}</span></td>
                     <td>{new Date(s.date_registered).toLocaleDateString()}</td>
                     <td>
                       <div className="actions">
@@ -162,14 +167,14 @@ export function Students() {
                           title="View"
                           onClick={() => navigate(`/students/${s.id}`)}
                         >
-                          👁
+                          <Eye size={15} />
                         </button>
                         <button
                           className="btn btn-secondary btn-sm btn-icon"
                           title="Edit"
                           onClick={() => navigate(`/students/${s.id}/edit`)}
                         >
-                          ✎
+                          <Pencil size={15} />
                         </button>
                         <button
                           className="btn btn-danger btn-sm btn-icon"
@@ -177,7 +182,7 @@ export function Students() {
                           disabled={deletingId === s.id}
                           onClick={() => handleDelete(s.id, s.full_name)}
                         >
-                          {deletingId === s.id ? '…' : '🗑'}
+                          {deletingId === s.id ? '…' : <Trash2 size={15} />}
                         </button>
                       </div>
                     </td>

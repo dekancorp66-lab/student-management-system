@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Bell, GraduationCap, LayoutDashboard, Menu, Plus, Search, UsersRound, X } from 'lucide-react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Bell, GraduationCap, LayoutDashboard, Menu, Plus, Search, Settings, UsersRound, X } from 'lucide-react';
+
+const titles: Record<string, string> = { '/': 'Welcome, Admin', '/students': 'Students', '/students/new': 'Add student' };
 
 export function Layout() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const title = titles[pathname] ?? 'Student profile';
+  const close = () => setOpen(false);
+  const linkClass = ({ isActive }: { isActive: boolean }) => `nav-link ${isActive ? 'active' : ''}`;
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -16,75 +22,36 @@ export function Layout() {
 
   return (
     <div className="app-layout">
-      <button className="menu-toggle" onClick={() => setOpen((value) => !value)} aria-label={open ? 'Close menu' : 'Open menu'}>
+      <button className="menu-toggle" onClick={() => setOpen((v) => !v)} aria-label={open ? 'Close menu' : 'Open menu'}>
         {open ? <X size={20} /> : <Menu size={20} />}
       </button>
-      <div
-        className={`sidebar-overlay ${open ? 'open' : ''}`}
-        onClick={() => setOpen(false)}
-      />
+      <div className={`sidebar-overlay ${open ? 'open' : ''}`} onClick={close} />
       <aside className={`sidebar ${open ? 'open' : ''}`}>
-        <NavLink to="/" className="sidebar-brand" onClick={() => setOpen(false)}>
-          <span className="sidebar-logo"><GraduationCap size={27} strokeWidth={1.8} /></span>
+        <NavLink to="/" className="sidebar-brand" onClick={close}>
+          <span className="sidebar-logo"><GraduationCap size={22} /></span>
           <span className="sidebar-title">SRMS</span>
-          <span className="sidebar-subtitle">Student Records<br />Management System</span>
         </NavLink>
-        <div className="nav-caption">Workspace</div>
         <ul className="nav-links">
-          <li>
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={() => setOpen(false)}
-            >
-              <LayoutDashboard size={17} /> Dashboard
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/students"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={() => setOpen(false)}
-            >
-              <UsersRound size={17} /> Students
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/students/new"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={() => setOpen(false)}
-            >
-              <Plus size={17} /> Add student
-            </NavLink>
-          </li>
-          </ul>
-        <div className="sidebar-bottom">
-          <span className="sidebar-status-dot" />
-          <span>Records system online</span>
+          <li><NavLink to="/" end className={linkClass} onClick={close}><LayoutDashboard size={18} /> Dashboard</NavLink></li>
+          <li><NavLink to="/students" end className={linkClass} onClick={close}><UsersRound size={18} /> Students</NavLink></li>
+          <li><NavLink to="/students/new" className={linkClass} onClick={close}><Plus size={18} /> Add student</NavLink></li>
+        </ul>
+        <div className="sidebar-user">
+          <span className="avatar avatar-admin">SA</span>
+          <strong>Student Admin</strong>
+          <small>Records manager</small>
         </div>
       </aside>
       <main className="main-content">
         <header className="topbar">
+          <h1 className="topbar-title">{title}</h1>
           <form className="topbar-search" onSubmit={handleSearch}>
             <Search size={16} aria-hidden="true" />
-            <input
-              aria-label="Search students"
-              placeholder="Search students..."
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-            />
-            <kbd>ENTER</kbd>
+            <input aria-label="Search students" placeholder="Search students" value={search} onChange={(e) => setSearch(e.target.value)} />
           </form>
-          <div className="topbar-account">
-            <button className="notification-button" type="button" aria-label="Notifications">
-              <Bell size={18} />
-              <span className="notification-dot" />
-            </button>
-            <span className="account-avatar">SA</span>
-            <span className="account-copy"><strong>Student Admin</strong><small>Records manager</small></span>
-          </div>
+          <button className="icon-btn" type="button" aria-label="Notifications"><Bell size={17} /><span className="notification-dot" /></button>
+          <button className="icon-btn" type="button" aria-label="Settings"><Settings size={17} /></button>
+          <div className="account"><span className="avatar avatar-admin" style={{ width: 38, height: 38, fontSize: '0.8rem' }}>SA</span><span>Admin</span></div>
         </header>
         <div className="page-content"><Outlet /></div>
       </main>
